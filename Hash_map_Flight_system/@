@@ -1,0 +1,128 @@
+#include<iostream>
+//#include<stdio>
+#include<fstream>
+#include<string>
+#include<sstream>
+
+#define FILE_NAME "HW4Data.txt"
+
+using namespace std;
+class Flight{
+
+	public:
+			int flightNumber;
+		 	string flightOrigin;
+			string flightDest;
+			int flightJourneyTime;
+			Flight *nextNode;
+	
+};
+
+
+void fetchFileData(string fileName, Flight ** head){
+	string line;
+ 	ifstream myfile ("HW4Data.txt");
+	
+	    if (myfile.is_open())
+    {
+    	while ( getline (myfile,line) )
+    	{	
+			int loopCounter = 0;
+			istringstream iss(line);
+			Flight *newNode = new Flight;
+			cout<<"The address of newNode is"<<newNode<<endl;
+
+    		do
+    		{
+				
+        		string sub;
+        		iss >> sub;
+				std::stringstream individualMember(sub);
+				cout << "Substring: " << sub << endl;
+
+				if(loopCounter == 0){
+					
+					int flightNumber;
+					individualMember >> flightNumber;
+					newNode-> flightNumber = flightNumber;
+					cout<<"Substring: "<< newNode->flightNumber<<endl; 
+				}
+				
+				else if(loopCounter == 1){
+					
+					newNode->flightOrigin = sub; 
+					cout<<"Substring: "<< newNode->flightOrigin<<endl;
+				
+				}
+				else if(loopCounter == 2){
+					
+					newNode->flightDest = sub;
+					cout<<"Substring: "<< newNode->flightDest<<endl;
+				}
+					
+				else if(loopCounter == 3){
+					int flightJourneyTime;
+					individualMember >> flightJourneyTime;
+					newNode->flightJourneyTime = flightJourneyTime;
+					cout<<"Substring: "<< newNode->flightJourneyTime<<endl;
+				}
+        		loopCounter++;
+
+    		} while (iss);
+
+			if(*head == NULL){
+				cout<<"The newNode address is "<<newNode;
+				newNode->nextNode = NULL;
+				*head == newNode;
+				cout<<"Head is initially NULL"<<endl;
+				cout<<"The value of head is" << head<< endl;
+				cout<<"The new address of newNode is "<< *head<<endl;
+			}
+		
+			else{
+				newNode -> nextNode = *head;
+				*head = newNode;
+				cout<<"Head is not NULL now"<<endl;
+				cout<<"The new address of head is " << *head<<endl ;
+			}
+      		cout << line << '\n';
+    	}
+    	myfile.close();
+	}
+}
+
+//node * nodeList[];
+int main(){
+	
+	Flight *head = NULL;
+	fetchFileData(FILE_NAME, &head);
+	
+	if(head == NULL){
+		cout<<"Head is NULL";
+	}	
+	while(head != NULL){
+		
+		cout<<head->flightNumber<<endl;
+		cout<<head->flightOrigin<<endl;
+		cout<<head->flightDest<<endl;
+		cout<<head->flightJourneyTime<<endl;
+		head = head->nextNode;
+	}
+	
+		
+}
+
+/*
+int createFlightObject(Flight * arrayList[]){
+	
+	static int counter = 0;
+	node * newNode = (node*)malloc(sizeof(Flight));
+
+	newNode->flightNumber = ;
+	newNode->flightOrigin = ;
+	newNode->flightDest = ;
+	newNode->flightJourneyTime = ;
+
+	arrayList[counter++] = newNode;
+	
+}*/

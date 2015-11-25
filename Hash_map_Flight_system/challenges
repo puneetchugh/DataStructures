@@ -1,0 +1,3 @@
+1) Tokenize the data
+2) convert string to integer for flightnumber and flightJourneyTime
+3) how to pass the data to function createFlightOBject
