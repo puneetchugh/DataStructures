@@ -328,8 +328,10 @@ int main(){
 		printf("\n6.Delete a node from somewhere in the middle");
 		printf("\n7.Traverse the list");
 		printf("\n8.Exit\n");
-
+		
+		/* Clears the input buffer */
 		while(getchar() != '\n');
+
 		scanf("%d",&choice);
 	
 		switch(choice){
