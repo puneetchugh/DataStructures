@@ -89,7 +89,7 @@ node* create_a_node(char * name, char *phone_number){
 * Return value - Returns the last node after which the 		*
 *				 new node needs to be inserted				*
 ************************************************************/
-node* position_of_node(node ** head, char * name){
+node* position_of_node(node ** head, char * name, int method){
 
 	if(*head == NULL){
 		
@@ -100,12 +100,13 @@ node* position_of_node(node ** head, char * name){
 	else{
 
 		node * temp = *head;
-		
+		node * parent_of_temp = *head;
 		while(1){
 
 			if(strcmp(name, temp->name) > 0){
 				
 				if((temp->right) != NULL){
+					parent_of_temp = temp;
 					temp = temp->right;
 				}
 				
@@ -120,7 +121,7 @@ node* position_of_node(node ** head, char * name){
 			else if(strcmp(name, temp->name) < 0){
 
 				if((temp->left) != NULL){
-
+					parent_of_temp = temp;
 					temp = temp->left;
 				}
 
@@ -133,12 +134,18 @@ node* position_of_node(node ** head, char * name){
 
 			else if(strcmp(name, temp->name) == 0){
 				
-				printf("\nDuplicate name cannot be added.");
+				printf("\nDuplicate name cannot be added.\n");
 				break;
 			}
 			
 		}
-		return temp;
+		if(method == 1){
+			
+			return temp;
+		}
+		else if(method == 2){
+			return parent_of_temp;
+		}
 	}
 	
 }
@@ -163,7 +170,7 @@ void add_a_node(node ** head, char * name){
 		*head = node_to_be_added;
 	}
 	else{
-		node * node_insert_pos = position_of_node(head, name);
+		node * node_insert_pos = position_of_node(head, name, 1);
 		if(node_insert_pos == NULL){
 			if(*head == NULL){
 			
@@ -194,7 +201,7 @@ void add_a_node(node ** head, char * name){
 *******************************************************************************/
 void delete_a_node(node ** head, char * name){
 
-	node *node_to_be_deleted = position_of_node(head, name);
+	node *node_to_be_deleted = position_of_node(head, name, 2);
 	
 	if(node_to_be_deleted == NULL){
 		printf("\nSuch a node does not exists\n");
@@ -204,7 +211,93 @@ void delete_a_node(node ** head, char * name){
 		
 		if((node_to_be_deleted->right != NULL && strcmp(name, node_to_be_deleted->right->name) == 0) ||
 				node_to_be_deleted->left != NULL && strcmp(name, node_to_be_deleted->left->name) == 0){
+		
+		
+		
+			if(node_to_be_deleted->right != NULL){
+				
+				
+			if(node_to_be_deleted->right->right != NULL && node_to_be_deleted->right->left != NULL && strcmp(name, node_to_be_deleted->right->name) == 0){
+				
+				node * inorder_successor = find_minimum(node_to_be_deleted->right->right);
+				if(inorder_successor == NULL){
+					
+					strcpy(node_to_be_deleted->right->name, node_to_be_deleted->right->right->name);
+					node * deleted = node_to_be_deleted->right->right;
+					free(deleted);
+					return;
+				}
+				strcpy(node_to_be_deleted->right->name, inorder_successor->left->name);
+				//delete the inorder successor
+				node * deleted = inorder_successor->left;
+				free(deleted);
+			}
+							
+			else if(((node_to_be_deleted->right->right != NULL) && strcmp(name, node_to_be_deleted->right->name)==0)){
+				
+				node * deleted = node_to_be_deleted->right;
+				node_to_be_deleted->right = node_to_be_deleted->right->right;
+				free(deleted);			
+
+			}
 			
+			else if((node_to_be_deleted->right->left != NULL) && strcmp(name, node_to_be_deleted->right->name)==0){
+				
+				node * deleted = node_to_be_deleted->right;
+				node_to_be_deleted->right = node_to_be_deleted->right->left;
+				free(deleted);
+			}
+
+			else{
+				
+				node * deleted = node_to_be_deleted->right;
+				node_to_be_deleted->right = NULL;
+				free(deleted);
+			}
+			}
+
+			else if(node_to_be_deleted->left != NULL){
+				
+					
+			 if(node_to_be_deleted->left->left != NULL && node_to_be_deleted->left->right != NULL && strcmp(name, node_to_be_deleted->left->name) == 0){
+				node * inorder_successor = find_minimum(node_to_be_deleted->left->right);
+				strcpy(node_to_be_deleted->left->name, inorder_successor->left->name);
+				
+				if(inorder_successor == NULL){
+					
+					strcpy(node_to_be_deleted->left->name, node_to_be_deleted->left->right->name);
+					node * deleted = node_to_be_deleted->left->right;
+					free(deleted);
+					return;
+				}
+				strcpy(node_to_be_deleted->left->name, inorder_successor->left->name);
+				//delete the inorder successor
+				node * deleted = inorder_successor->left;
+				free(deleted);
+			}
+				
+				
+			else if((node_to_be_deleted->left->left != NULL)&& strcmp(name, node_to_be_deleted->left->name)==0){
+			
+				node * deleted = node_to_be_deleted->left;
+				node_to_be_deleted->left = node_to_be_deleted->left->left;
+				free(deleted);
+			}		
+			else if((node_to_be_deleted->left->right != NULL)&& strcmp(name, node_to_be_deleted->left->name)==0){
+				
+				node * deleted = node_to_be_deleted->left;
+				node_to_be_deleted->left = node_to_be_deleted->left->right;
+				free(deleted);
+			}
+			else{
+				
+				node * deleted = node_to_be_deleted->left;
+				node_to_be_deleted->left = NULL;
+				free(deleted);
+			}
+			}
+		
+			/*	
 			if(node_to_be_deleted->right->right != NULL && node_to_be_deleted->right->left != NULL && strcmp(name, node_to_be_deleted->right->name) == 0){
 				
 				node * inorder_successor = find_minimum(node_to_be_deleted->right->right);
@@ -264,6 +357,50 @@ void delete_a_node(node ** head, char * name){
 				node * deleted = node_to_be_deleted->left;
 				node_to_be_deleted->left = node_to_be_deleted->left->right;
 				free(deleted);
+			}*/
+		}
+		else{
+			
+			//the node is a root node
+			if(strcmp(node_to_be_deleted->name, (*head)->name) == 0){
+				
+				if(((*head)->left == NULL) && ((*head)->right == NULL)){
+					
+					*head = NULL;
+				}
+				else if(((*head)->left != NULL) && ((*head)->right != NULL)){
+					
+					node * inorder_successor = find_minimum((*head)->right);
+					if(inorder_successor == NULL){
+					
+						strcpy((*head)->name, (*head)->right->name);
+						node * deleted = node_to_be_deleted->right;
+						(*head)->right = NULL;
+						free(deleted);
+						return;
+					}
+					
+				}
+
+				else if((*head)->left == NULL){
+					
+					
+					node * inorder_successor = find_minimum((*head)->right);
+					if(inorder_successor == NULL){
+					
+						strcpy((*head)->name, (*head)->right->name);
+						node * deleted = node_to_be_deleted->right;
+						free(deleted);
+						return;
+					}
+				}
+				
+				else if((*head)->right == NULL){
+					
+					node * deleted = *head;
+					*head = (*head)->left;
+					free(deleted);
+				}		
 			}
 		}
 	}
@@ -312,6 +449,12 @@ int main(){
 	add_a_node(&head, "Jyoti");
 	add_a_node(&head, "Pawan");
 	add_a_node(&head, "Kamran");
+	add_a_node(&head, "Xiomi");
+	post_order(head);
+	
+	//delete_a_node(&head, "Jyoti");
+	delete_a_node(&head, "Puneet");
+	//delete_a_node(&head, "Kamran");
 	post_order(head);
 	return 1;
 }
